@@ -17,6 +17,7 @@ public class MyMath
     public class MatrixInToHide
     {
         public float[,] matrix = new float[InNode, HideNode];
+        public float[] Bias = new float[HideNode];
 
         public float[] Multi(float[] inputs)
         {
@@ -24,13 +25,18 @@ public class MyMath
 
             for (int i = 0; i < HideNode; i++) outputs[i] = 0;
 
-            for(int i=0;i< InNode; i++)
+            for (int i = 0; i < InNode; i++)
             {
-                for(int j=0;j< HideNode; j++)
+                for (int j = 0; j < HideNode; j++)
                 {
                     outputs[j] += inputs[i] * matrix[i, j];
                 }
             }
+            /*Relu激活函数*/
+            /*for (int i = 0; i < HideNode; i++)
+            {
+                outputs[i] = Relu(outputs[i] + Bias[i]);
+            }*/
 
             return outputs;
         }

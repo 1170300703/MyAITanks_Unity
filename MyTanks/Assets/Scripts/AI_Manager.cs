@@ -93,6 +93,11 @@ public class AI_Manager : MonoBehaviour
                     }
                 }
 
+                for(int i=0;i<MyMath.HideNode;i++)
+                {
+                    tkai.InMatrix.Bias[i] = Random.Range(-1f, 1f);
+                }
+
                 for (int i = 0; i < MyMath.HideNode; i++)
                 {
                     for (int j = 0; j < MyMath.OutNode; j++)
@@ -187,14 +192,15 @@ public class AI_Manager : MonoBehaviour
             {
                 int rb = Random.Range(0, MyMath.OutNode);
                 int ran = rb * MyMath.HideNode + Random.Range(0, MyMath.HideNode);
+                int hb = Random.Range(0, MyMath.HideNode);
 
                 int t1 = Random.Range(0, 200);
                 int t2 = Random.Range(0, 200);
 
                 AIData AI1, AI2;
 
-                MyMath.MatrixInToHide m49 = new MyMath.MatrixInToHide();
-                MyMath.MatrixHideToOut m93 = new MyMath.MatrixHideToOut();
+                MyMath.MatrixInToHide InMatrix = new MyMath.MatrixInToHide();
+                MyMath.MatrixHideToOut OutMatrix = new MyMath.MatrixHideToOut();
                 float[] Bias = new float[MyMath.OutNode];
 
 
@@ -228,31 +234,31 @@ public class AI_Manager : MonoBehaviour
                     {
                         if ((i * MyMath.HideNode + j) < ran)
                         {
-                            m49.matrix[i, j] = AI1.InMatrix.matrix[i, j];
+                            InMatrix.matrix[i, j] = AI1.InMatrix.matrix[i, j];
                         }
                         else
                         {
-                            m49.matrix[i, j] = AI2.InMatrix.matrix[i, j];
+                            InMatrix.matrix[i, j] = AI2.InMatrix.matrix[i, j];
                         }
                         //突变
                         if (Random.Range(0, 1f) < mutationRate / 4)
                         {
-                            m49.matrix[i, j] += Random.Range(-mutationField * 16 < 1 ? -mutationField * 16 : 1, mutationField * 16 < 1 ? -mutationField * 16 : 1);
+                            InMatrix.matrix[i, j] += Random.Range(-mutationField * 16 < 1 ? -mutationField * 16 : 1, mutationField * 16 < 1 ? -mutationField * 16 : 1);
                         }
 
                         if (Random.Range(0, 1f) < mutationRate / 2)
                         {
-                            m49.matrix[i, j] += Random.Range(-mutationField * 4, mutationField * 4);
+                            InMatrix.matrix[i, j] += Random.Range(-mutationField * 4, mutationField * 4);
                         }
 
                         if (Random.Range(0, 1f) < mutationRate)
                         {
-                            m49.matrix[i, j] += Random.Range(-mutationField, mutationField);
+                            InMatrix.matrix[i, j] += Random.Range(-mutationField, mutationField);
                         }
 
                         if (Random.Range(0, 1f) < mutationRate * 2)
                         {
-                            m49.matrix[i, j] += Random.Range(-mutationField / 4, mutationField / 4);
+                            InMatrix.matrix[i, j] += Random.Range(-mutationField / 4, mutationField / 4);
                         }
                     }
                 }
@@ -263,37 +269,62 @@ public class AI_Manager : MonoBehaviour
                     {
                         if ((i * MyMath.HideNode + j) < ran)
                         {
-                            m93.matrix[j, i] = AI1.OutMatrix.matrix[j, i];
+                            OutMatrix.matrix[j, i] = AI1.OutMatrix.matrix[j, i];
                         }
                         else
                         {
-                            m93.matrix[j, i] = AI2.OutMatrix.matrix[j, i];
+                            OutMatrix.matrix[j, i] = AI2.OutMatrix.matrix[j, i];
                         }
                         //突变
                         if (Random.Range(0, 1f) < mutationRate / 4)
                         {
-                            m93.matrix[j, i] += Random.Range(-mutationField * 16 < 1 ? -mutationField * 16 : 1, mutationField * 16 < 1 ? -mutationField * 16 : 1);
+                            OutMatrix.matrix[j, i] += Random.Range(-mutationField * 16 < 1 ? -mutationField * 16 : 1, mutationField * 16 < 1 ? -mutationField * 16 : 1);
                         }
                         if (Random.Range(0, 1f) < mutationRate / 2)
                         {
-                            m93.matrix[j, i] += Random.Range(-mutationField * 4, mutationField * 4);
+                            OutMatrix.matrix[j, i] += Random.Range(-mutationField * 4, mutationField * 4);
                         }
                         if (Random.Range(0, 1f) < mutationRate)
                         {
-                            m93.matrix[j, i] += Random.Range(-mutationField, mutationField);
+                            OutMatrix.matrix[j, i] += Random.Range(-mutationField, mutationField);
                         }
                         if (Random.Range(0, 1f) < mutationRate * 2)
                         {
-                            m93.matrix[j, i] += Random.Range(-mutationField / 4, mutationField / 4);
+                            OutMatrix.matrix[j, i] += Random.Range(-mutationField / 4, mutationField / 4);
                         }
                     }
                 }
 
+                /*Hide Bias*/
+                for (int i = 0; i < MyMath.HideNode; i++)
+                {
+                    /*if (i < hb) InMatrix.Bias[i] = AI1.InMatrix.Bias[i];
+                    else InMatrix.Bias[i] = AI2.InMatrix.Bias[i];*/
 
+                    if (i == hb) InMatrix.Bias[i] = AI2.InMatrix.Bias[i];
+                    else InMatrix.Bias[i] = AI1.InMatrix.Bias[i];
+
+                    if (Random.Range(0, 1f) < mutationRate / 2)
+                    {
+                        InMatrix.Bias[i] += Random.Range(-mutationField * 2, mutationField * 2);
+                    }
+                    if (Random.Range(0, 1f) < mutationRate)
+                    {
+                        InMatrix.Bias[i] += Random.Range(-mutationField, mutationField);
+                    }
+                    if (Random.Range(0, 1f) < mutationRate * 2)
+                    {
+                        InMatrix.Bias[i] += Random.Range(-mutationField / 4, mutationField / 4);
+                    }
+                }
+                /*Out Bias*/
                 for (int i=0;i<MyMath.OutNode;i++)
                 {
-                    if (i < rb) Bias[i] = AI1.Bias[i];
-                    else Bias[i] = AI2.Bias[i];
+                    /*if (i < rb) Bias[i] = AI1.Bias[i];
+                    else Bias[i] = AI2.Bias[i];*/
+
+                    if (i == rb) Bias[i] = AI2.Bias[i];
+                    else Bias[i] = AI1.Bias[i];
 
                     if (Random.Range(0, 1f) < mutationRate / 2)
                     {
@@ -341,7 +372,7 @@ public class AI_Manager : MonoBehaviour
                     }
                 }*/
             
-                datalist.Add(new AIData(0,m49,m93,Bias));
+                datalist.Add(new AIData(0,InMatrix, OutMatrix, Bias));
             }
             
             for (tki = 0; tki < TankAmount; tki++)
